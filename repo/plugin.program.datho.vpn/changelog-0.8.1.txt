@@ -1,0 +1,9 @@
+----------------------------------
+ plugin.program.datho.vpn - Changelog
+----------------------------------
+
+
+Version 0.8.1
+------------
+* Remove useless files
+

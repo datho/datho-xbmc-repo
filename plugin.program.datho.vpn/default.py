@@ -127,4 +127,4 @@ else:
 
 xbmcplugin.endOfDirectory(int(arguments[1]))
 
-# This is for 0.3.1
+# Version 0.8.1
