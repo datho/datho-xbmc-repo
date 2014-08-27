@@ -23,6 +23,8 @@ import os
 import time
 import urllib2
 
+import requests
+
 import config
 from utils import Logger
 
@@ -47,7 +49,8 @@ class VPNContainer():
 class VPNServerManager:
 
     URL      =  'http://www.wlvpn.com/serverList.xml'
-    REGEX = 'server name="(.+?)" capacity="(.+?)" city="(.+?)" country="(.+?)" icon="(.+?)" ip="(.+?)" status="(.+?)" visible="(.+?)"'
+    REGEX_STR = 'server name="(.+?)" capacity="(.+?)" city="(.+?)" country="(.+?)" icon="(.+?)" ip="(.+?)" status="(.+?)" visible="(.+?)"'
+    REGEX = re.compile(REGEX_STR)
     TIMEOUT = 15 * 60
     _instance = None
 
@@ -64,12 +67,31 @@ class VPNServerManager:
         return (time.time() - self.lastContentUpdateTimestamp > self.TIMEOUT)
 
     def _getItems(self):
+        ret = self._getItemsFromBase()
+        if ret:
+            return ret
+
         try:
             html  = GetContentFromUrl(self.URL)
             return re.compile(self.REGEX).findall(html)
         except urllib2.URLError, e:
             Logger.log("There was an error while getting content from remote server")
             raise NoConnectionError("There was an error while getting content from remote server")
+
+    def _getItemsFromBase(self):
+        try:
+            Logger.log("Trying to retrieve info from base", Logger.LOG_DEBUG)
+            quoted_user = urllib2.quote(config.getUsername())
+            quoted_pass =  urllib2.quote(config.getPassword())
+            ret = requests.get("http://www.dathovpn.com/service/addon/servers/%s/%s/" % (quoted_user, quoted_pass))
+            result = self.REGEX.findall(ret.text)
+            Logger.log("Retrieve from base ok result len:%s" %  len(result), Logger.LOG_DEBUG)
+            return result
+        except urllib2.URLError, e:
+            Logger.log("There was an error while getting content from remote server %r" % e, Logger.LOG_INFO)
+            return []
+
+
 
     def _init(self):
         self.lastContentUpdateTimestamp = time.time()
