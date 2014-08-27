@@ -141,4 +141,4 @@ else:
 
 xbmcplugin.endOfDirectory(int(arguments[1]))
 
-# Version 0.8.1
+# Version 0.8.5

@@ -1,0 +1,17 @@
+----------------------------------
+ plugin.program.datho.vpn - Changelog
+----------------------------------
+
+Version 0.8.5
+------------
+* VPN termination Fixed
+
+Version 0.8.2
+------------
+* GPL header added
+
+
+Version 0.8.1
+------------
+* Remove useless files
+

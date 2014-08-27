@@ -1,21 +1,7 @@
 #
-#       Copyright (C) 2014 Datho Digital Inc
-#       Martin Candurra (martincandurra@dathovpn.com)
+# Copyright (C) 2014 Datho Digital Inc., All rights reserved
 #
-#  This Program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2, or (at your option)
-#  any later version.
-#
-#  This Program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with XBMC; see the file COPYING.  If not, write to
-#  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
-#  http://www.gnu.org/copyleft/gpl.html
+# Permission must be obtained from the copyright holder for any commercial use, distribution or modification of this software.
 #
 
 import subprocess
@@ -405,9 +391,12 @@ class UnixVPNConnector(CommandExecutionConnector):
 
     def _getKillCmd(self):
         if self._shouldUseCmdList():
-            return ['/usr/bin/pkill', '-SIGINT' , 'openvpn']
+            killCmd = self._killCmdPath()
+            Logger.log("Kill cmd path:%s" % killCmd, Logger.LOG_DEBUG)
+            return [killCmd, '-SIGINT' , 'openvpn']
         else:
             return 'killall -SIGINT openvpn'
+
 
     def _kill(self):
         ret = False
@@ -415,7 +404,7 @@ class UnixVPNConnector(CommandExecutionConnector):
             Logger.log("Unix trying to kill openvpn")
             # We should try with sigint so let openvpn to disconnect properly
             cmd = self._getKillCmd()
-            Logger.log("Killing cmdXXX:%r" % cmd)
+            Logger.log("Killing cmd:%r" % cmd)
             cmd = self._addSudoIfNeeded(cmd)
 
             shell = self._needShell()
@@ -457,6 +446,17 @@ class UnixVPNConnector(CommandExecutionConnector):
                 cmdList.extend( cmds )
                 cmds = cmdList
         return cmds
+
+    def _killCmdPath(self):
+        path = '/usr/bin/killall'
+        if self._check(path):
+            return path
+        path = '/bin/killall'
+        if self._check(path):
+            return path
+        return '/sbin/killall'
+
+
 
 
 class LinuxVPNConnector(UnixVPNConnector):
