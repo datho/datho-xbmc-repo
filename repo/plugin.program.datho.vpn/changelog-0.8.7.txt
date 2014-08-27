@@ -6,6 +6,7 @@ Version 0.8.7
 ------------
 * OpenElec fix
 
+
 Version 0.8.6
 ------------
 * Fanart updated

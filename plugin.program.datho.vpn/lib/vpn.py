@@ -313,10 +313,12 @@ class CommandExecutionConnector(VPNConnector):
         return not (self._isEnabled(response) or self._isDisabled(response))
 
     def _getOpenVPNOutput(self):
-        f  = open(config.OpenVPNLogFilePath, mode='r')
-        data = f.read()
-        f.close()
-        return data
+        if self._check(config.OpenVPNLogFilePath):
+            f  = open(config.OpenVPNLogFilePath, mode='r')
+            data = f.read()
+            f.close()
+            return data
+        return None            
 
     # The file must be erased before using it to avoid reading all data
     def _eraseOpenVPNLogFile(self):
@@ -376,13 +378,15 @@ class UnixVPNConnector(CommandExecutionConnector):
                 Logger.log("openvpn process was not found, so assuming vpn is disabled", Logger.LOG_DEBUG)
                 return True
 
+            xbmc.sleep(sleep_time_s * 1000)
+            timeout -= sleep_time_s
+
             ret = self._getOpenVPNOutput()
-            if self._isDisabled(ret):
+            # Even if it is disabled or the file does not exists (because it never started running) the VPN is disabled
+            if self._isDisabled(ret) or ret is None:
                 Logger.log("VPN is disabled now")
                 return True
 
-            xbmc.sleep(sleep_time_s * 1000)
-            timeout -= sleep_time_s
 
         Logger.log("VPN has not been disabled...", Logger.LOG_ERROR)
         print ret

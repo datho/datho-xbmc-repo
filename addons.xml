@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="plugin.program.datho.vpn" name="Datho VPN" version="0.8.6" provider-name="Datho-Digital">
+<addon id="plugin.program.datho.vpn" name="Datho VPN" version="0.8.7" provider-name="Datho-Digital">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="script.module.requests" version="1.1.0"/>
