@@ -1,0 +1,24 @@
+----------------------------------
+ plugin.program.datho.vpn - Changelog
+----------------------------------
+
+
+Version 0.3.1
+------------
+* Testing update mechanism works
+
+Version 0.2.1
+------------
+* Test update
+
+Version 0.2.1
+------------
+* Ability to Geo Locate
+
+Version 0.2.0
+------------
+* Version updated
+
+Version 0.1.6
+------------
+* Initial release

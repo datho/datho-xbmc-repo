@@ -33,14 +33,14 @@
 
 
 
-<addon id="repository.datho.xbmc-plugins" name="datho Add-on Repository" version="0.8.0" provider-name="datho-digital">
-    <extension point="xbmc.addon.repository" name="datho Add-on Repository">
+<addon id="repository.datho.xbmc-plugins" name="Datho Add-on Repository" version="1.0.0" provider-name="Datho-Digital">
+    <extension point="xbmc.addon.repository" name="Datho Add-on Repository">
         <info compressed="false">http://raw.github.com/datho/datho-xbmc-repo/master/addons.xml</info>
         <checksum>http://raw.github.com/datho/datho-xbmc-repo/master/addons.xml.md5</checksum>
         <datadir zip="true">http://raw.github.com/datho/datho-xbmc-repo/master/repo/</datadir>
 	</extension>
 	<extension point="xbmc.addon.metadata">
-		<summary>Install Add-ons from datho Repository</summary>
+		<summary>Install Add-ons from Datho Repository</summary>
 		<description>Add-ons for XBMC</description>
 		<disclaimer>by datho</disclaimer>
 		<platform>all</platform>
