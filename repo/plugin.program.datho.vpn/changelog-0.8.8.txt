@@ -1,0 +1,26 @@
+----------------------------------
+ plugin.program.datho.vpn - Changelog
+----------------------------------
+
+Version 0.8.8
+------------
+* OpenElec fix
+
+
+Version 0.8.6
+------------
+* Fanart updated
+
+Version 0.8.5
+------------
+* VPN connection close Fixed
+
+Version 0.8.2
+------------
+* GPL header added
+
+
+Version 0.8.1
+------------
+* Remove useless files
+

@@ -383,7 +383,7 @@ class UnixVPNConnector(CommandExecutionConnector):
 
             ret = self._getOpenVPNOutput()
             # Even if it is disabled or the file does not exists (because it never started running) the VPN is disabled
-            if self._isDisabled(ret) or ret is None:
+            if ret is None or self._isDisabled(ret):
                 Logger.log("VPN is disabled now")
                 return True
 
