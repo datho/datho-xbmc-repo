@@ -2,7 +2,7 @@
  plugin.program.datho.vpn - Changelog
 ----------------------------------
 
-Version 0.9.0
+Version 0.9.1
 ------------
 * Company added so the user does not need to add it
 
