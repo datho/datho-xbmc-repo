@@ -30,7 +30,7 @@ HOME     =  ADDON.getAddonInfo('path')
 PROFILE  =  xbmc.translatePath(ADDON.getAddonInfo('profile'))
 EXTERNAL = 0
 TITLE    = 'Datho-Digital VPN'
-VERSION  = '0.8.8'
+VERSION  = '0.9.0'
 
 COUNTRIES = {'AT' : 'Austria', 'AU':'Australia', 'BE':'Belguim', 'BR':'Brazil', 'CH':'Switzerland', 'DK':'Denmark', 'DE':'Germany', 'ES':'Spain', 'FR':'France', 'HU':'Hungary',  'JP':'Japan', 'KR':'South Korea', 'NL':'Netherlands', 'PL':'Poland', 'SE':'Sweden', 'SG':'Singapore', 'UK':'United Kingdom', 'US':'United  States'}
 OpenVPNLogFilePath =  os.path.join(PROFILE, 'openvpn.log')
@@ -72,14 +72,14 @@ def getSudo():
     return sudo, sudopwd
 
 def getUsername():
-    return ADDON.getSetting('USER')
+    return ADDON.getSetting('USER') + "@datho"
 
 def getPassword():
     return ADDON.getSetting('PASS')
 
 # Return True if User and Password are not empty
 def CheckCredentialsEmpty():
-    user = getUsername()
+    user = ADDON.getSetting('USER')
     pwd  = getPassword()
     return user is '' or pwd is ''
 

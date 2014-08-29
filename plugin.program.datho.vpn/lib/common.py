@@ -29,7 +29,6 @@ def CheckVersion():
     msg = 'Welcome to Datho VPN %s' % config.VERSION
 
     Logger.log(msg, Logger.LOG_ERROR)
-    gui.DialogOK(msg)
 
     if prev == curr:
         return
