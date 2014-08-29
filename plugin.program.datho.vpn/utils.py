@@ -24,6 +24,7 @@ try:
 except:
     import requests
 
+import traceback
 import xbmc
 
 
@@ -41,22 +42,70 @@ class Logger:
         return xbmc.log("%s %s" % (prefix, msg), level)
 
 
-
 def GetPublicNetworkInformation():
+    
+    for i in range(2):
+        xbmc.sleep(250)        
+        
+        data = GetPrimaryPublicNetworkInformation()
+        if data:
+            return data
+            
+        xbmc.sleep(250)        
+            
+        data = GetSecondaryPublicNetworkInformation()
+        if data:
+            return data
+
+    return None    
+    
+    
+
+def GetSecondaryPublicNetworkInformation():
 
     url = 'http://www.ip2location.com/'
-
-    response = requests.get(url)
-    content = response.content
-    Logger.log("GetPublicNetworkInformation: trying to get information ...", Logger.LOG_DEBUG)
-    ipAddressMatch   = re.compile("<td><label>(.+?)</label></td>").findall(content)
-    countryMatch   = re.compile("<td><label for=\"chkCountry\">(.+?)</label></td>").findall(content)
-    cityMatch   = re.compile("<td><label for=\"chkRegionCity\">(.+?)</label></td>").findall(content)
-
-    if len(ipAddressMatch)!=2 or len(countryMatch)!=2 or len(cityMatch)!=2:
-        Logger.log("There was an error parsing network data from %s" % url)
-        print "There was an error parsing the data"
+    try:
+        Logger.log("GetSecondaryPublicNetworkInformation: trying to get information ...", Logger.LOG_DEBUG)
+        response = requests.get(url)
+        content = response.content
+        ipAddressMatch   = re.compile("<td><label>(.+?)</label></td>").findall(content)
+        countryMatch   = re.compile("<td><label for=\"chkCountry\">(.+?)</label></td>").findall(content)
+        cityMatch   = re.compile("<td><label for=\"chkRegionCity\">(.+?)</label></td>").findall(content)
+    
+        if len(ipAddressMatch)!=2 or len(countryMatch)!=2 or len(cityMatch)!=2:
+            Logger.log("There was an error parsing network data from %s" % url)
+            print "There was an error parsing the data"
+            return None
+    
+        Logger.log("GetSecondaryPublicNetworkInformation: ip:%s country:%s city:%s" % (ipAddressMatch[1], countryMatch[1], cityMatch[1]), Logger.LOG_DEBUG)
+        return ipAddressMatch[1], countryMatch[1], cityMatch[1]
+    except Exception:
+        Logger.log("GetSecondaryPublicNetworkInformation: there was an error getting data...", Logger.LOG_DEBUG)
+        traceback.print_exc()
         return None
+        
+        
+def GetPrimaryPublicNetworkInformation():
 
-    Logger.log("GetPublicNetworkInformation: ip:%s country:%s city:%s" % (ipAddressMatch[1], countryMatch[1], cityMatch[1]), Logger.LOG_DEBUG)
-    return ipAddressMatch[1], countryMatch[1], cityMatch[1]
+    url = "http://whatismyipaddress.com/"
+    user_agent = {'User-agent': 'Mozilla/5.0'}
+    try:
+        Logger.log("GetPrimaryPublicNetworkInformation: trying to get information ...", Logger.LOG_DEBUG)
+
+        response = requests.get(url, headers = user_agent)
+        content = response.content
+        
+        ipAddressMatch   = re.compile("<!-- do not script -->\n(.+?)\n<!-- do not script -->").findall(content)
+        countryMatch   = re.compile("Country:</th><td style=\"font-size:14px;\">(.+?)</td></tr>").findall(content)
+        cityMatch   = re.compile("City:</th><td style=\"font-size:14px;\">(.+?)</td></tr>").findall(content)
+    
+        if len(ipAddressMatch)!=1 or len(countryMatch)!=1 or len(cityMatch)!=1:
+            Logger.log("GetPrimaryPublicNetworkInformation: could not parse data ...", Logger.LOG_DEBUG)
+            return None
+    
+        Logger.log("GetPrimaryPublicNetworkInformation: ip:%s country:%s city:%s" % (ipAddressMatch[0], countryMatch[0], cityMatch[0]), Logger.LOG_DEBUG)
+        return ipAddressMatch[0], countryMatch[0], cityMatch[0]
+    except Exception:        
+        Logger.log("GetPrimaryPublicNetworkInformation: there was an error getting data...", Logger.LOG_DEBUG)
+        traceback.print_exc()
+        return None
