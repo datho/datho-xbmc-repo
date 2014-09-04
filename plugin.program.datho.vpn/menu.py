@@ -23,6 +23,7 @@
 import xbmc
 import contextmenu
 import config
+from config import __language__
 
 def runExternal(path):
     cmd = 'ActivateWindow(Programs,"plugin://%s/?mode=%d", return)' % (config.ADDONID, config.EXTERNAL)
@@ -40,9 +41,9 @@ def doMenu():
 
     if len(path) > 0:
         menu = []
-        menu.append(('Activate Datho-Digital VPN', 1))
-        menu.append(('Datho-Digital VPN Settings', 2))
-        menu.append(('Standard context menu',      0))
+        menu.append((__language__(30009), 1))
+        menu.append((__language__(30010), 2))
+        menu.append((__language__(30011), 0))
 
         choice = contextmenu.showMenu(config.ADDONID, menu)
 

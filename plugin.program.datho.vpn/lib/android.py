@@ -29,6 +29,7 @@ from vpn import VPNConnector
 from utils import Logger
 import gui
 import config
+from config import __language__
 
 
 class AndroidVPNConnector(VPNConnector):
@@ -61,13 +62,13 @@ class AndroidVPNConnector(VPNConnector):
                 Logger.log("Disconnection Ok...the VPN must be disconnected now", Logger.LOG_DEBUG)
                 pass
             elif ret==self.NO_RESPONSE:
-                gui.DialogOK("Error when trying to Kill the VPN", "No notifications received from Remote Controller")
+                gui.DialogOK(__language__(30012)  , __language__(30013))
                 Logger.log("Error when trying to Kill the VPN: No notifications received from Remote Controller", Logger.LOG_ERROR)
             elif ret==self.DISCONNECT_TIMEOUT:
-                gui.DialogOK("Error when trying to disconnect the OpenVPN", "it did not disconnec", "Please retry")
+                gui.DialogOK(__language__(30014), __language__(30015), __language__(30005))
                 Logger.log("Error when trying to disconnect the OpenVPN: it did not disconnect", Logger.LOG_ERROR)
             else:
-                gui.DialogOK("Unknown Error while disconnecting", "", "")
+                gui.DialogOK(__language__(30016), "", "")
                 Logger.log("Unknown Error while disconnecting", Logger.LOG_ERROR)
 
         self._stopRemoteController()
@@ -137,7 +138,7 @@ class AndroidVPNConnector(VPNConnector):
 
         ret = self._runRemoteController(self.OPENVPN_CONNECT_ACTION, self._timeout)
         if not ret:
-            gui.DialogOK("It was not possible to execute the VPN Remote Controller", "Please check if it is installed in your Android", "")
+            gui.DialogOK(__language__(30017), __language__(30018), "")
             return
 
         statusDone = False
@@ -162,12 +163,12 @@ class AndroidVPNConnector(VPNConnector):
                 break
 
             elif 'USER_DID_NOT_APPROVE_THE_APP' in status:
-                gui.DialogOK("The VPN Client was not approved", "Please try again", "")
+                gui.DialogOK(__language__(30019), __language__(30005), "")
                 statusGrabbed = True
                 break
 
             elif 'EXITING; auth-failure' in status:
-                gui.DialogOK("There was an error while logging in", "Please check the credentials", "and try again")
+                gui.DialogOK(__language__(30038), __language__(30037), __language__(30005))
                 self.kill()
                 statusGrabbed = True
                 break
@@ -178,7 +179,7 @@ class AndroidVPNConnector(VPNConnector):
         Logger.log("_GetCurrent status:::")
         print status
         if not statusGrabbed:
-            gui.DialogOK("There was an error", "The VPN client was not able to connect", "please try again")
+            gui.DialogOK(__language__(30020), __language__(30021), __language__(30005))
             Logger.log("ERROR it break the loop with timeout. Check the notification status", Logger.LOG_ERROR)
 
         if busy:
@@ -257,7 +258,7 @@ class AndroidVPNConnector(VPNConnector):
         ret = self._runRemoteController(self.CONTROLLER_FINISH, timeout)
         if not ret:
             Logger.log("Remote Controller did not respond the FINISH command", Logger.LOG_ERROR)
-            gui.DialogOK("Error when trying terminate the Remote Controller", "No notifications received from Remote Controller")
+            gui.DialogOK(__language__(30022), __language__(30023))
 
 
 

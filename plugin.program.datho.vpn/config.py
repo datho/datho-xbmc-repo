@@ -40,6 +40,7 @@ ICON     =  os.path.join(HOME, 'icon.png')
 FANART   =  os.path.join(HOME, 'fanart.jpg')
 URL      =  'http://www.wlvpn.com/serverList.xml'
 
+__language__ = ADDON.getLocalizedString
 
 def getOS():
     return ADDON.getSetting('OS')

@@ -16,6 +16,7 @@ import gui
 import config
 from utils import Logger, GetPublicNetworkInformation
 import common
+from config import __language__
 
 class OpenVPNExeNotFoundException(Exception):
     pass
@@ -119,11 +120,11 @@ class VPNConnector:
         networkInfo = GetPublicNetworkInformation()
         if networkInfo:
             ipAddress, country, city = networkInfo
-            return "VPN successfully enabled", "Your IP address is: %s" % ipAddress, "%s, %s" % (city.title(), country.title())
-        return '%s VPN now enabled' % self._countryName, '', ''
+            return __language__(30024), __language__(30025) % ipAddress, "%s, %s" % (city.title(), country.title())
+        return __language__(30026) % self._countryName, '', ''
 
     def _connectionFailedMessage(self):
-        return '%s VPN failed to start' % self._countryName, 'Please check your settings', 'and try again'
+        return __language__(30027) % self._countryName, __language__(30028), __language__(30005)
 
 
     def _checkStatus(self, response):
@@ -143,7 +144,7 @@ class VPNConnector:
         pwd  = config.getPassword()
 
         if user == '' or pwd == '':
-            gui.DialogOK('It is not possible to connect without credentials', 'Please set the username and password', '')
+            gui.DialogOK(__language__(30029), __language__(30030), '')
             return None
 
         f = open(authPath, mode='w')
@@ -218,7 +219,7 @@ class CommandExecutionConnector(VPNConnector):
         Logger.log("OpenVPN Client should be on:%s" % executableFile)
         if not executableFile:
             Logger.log('Could not find a VPN application for %s' % config.getOS(), Logger.LOG_ERROR)
-            gui.DialogOK(config.TITLE + ' - ' + config.VERSION, 'Could not find a VPN application for %s' % config.getOS(), 'Please check your settings and try again.')
+            gui.DialogOK(config.TITLE + ' - ' + config.VERSION, __language__(30040) % config.getOS(), __language__(30041))
             raise OpenVPNExeNotFoundException()
 
         executableFile = executableFile.replace('\\', '/')
@@ -238,7 +239,7 @@ class CommandExecutionConnector(VPNConnector):
         Logger.log("OpenVPN Client should be on:%s" % executableFile)
         if not executableFile:
             Logger.log('Could not find a VPN application for %s' % config.getOS(), Logger.LOG_ERROR)
-            gui.DialogOK(config.TITLE + ' - ' + config.VERSION, 'Could not find a VPN application for %s' % config.getOS(), 'Please check your settings and try again.')
+            gui.DialogOK(config.TITLE + ' - ' + config.VERSION, __language__(30031) % config.getOS(), __language__(30032))
             raise OpenVPNExeNotFoundException()
 
 
@@ -273,14 +274,14 @@ class CommandExecutionConnector(VPNConnector):
                 self.kill()
             elif self._authenticationFailed(response):
                 Logger.log("_checkStatus authetication failed", Logger.LOG_ERROR)
-                title, msg1, msg2 = 'Invalid credentials', 'Please check them and try again', ""
+                title, msg1, msg2 = __language__(30038), __language__(30005), ""
             elif self._isEnabled(response):
                 Logger.log("_checkStatus enabled", Logger.LOG_DEBUG)
                 title, msg1, msg2 = self._connectionOkMessage()
                 statusOk = True
             elif self._isNetworkUnreachable(response):
                 Logger.log("_checkStatus network unreachable", Logger.LOG_DEBUG)
-                title, msg1, msg2 = 'Network is unreachable', 'Check your network connection', ""
+                title, msg1, msg2 = __language__(30039), __language__(30004), ""
             else:
                 Logger.log("_checkStatus failed other reason", Logger.LOG_DEBUG)
                 self.kill()
@@ -357,7 +358,7 @@ class UnixVPNConnector(CommandExecutionConnector):
         return 'TUNSETIFF tun: Operation not permitted' in response
 
     def _accessDeniedMessage(self):
-        return 'It seems you don\'t have permissions to perform this action', 'You either run xbmc as root or', 'configure sudo settings'
+        return __language__(30033) , __language__(30034), __language__(30035)
 
     def _getStdErrOutput(self):
         f  = open(config.StdErrLogFilePath, mode='r')
@@ -372,7 +373,7 @@ class UnixVPNConnector(CommandExecutionConnector):
 
             ret = self._getStdErrOutput()
             if "incorrect password attempt" in ret:
-                raise AccessDeniedException("Sudo password is not valid")
+                raise AccessDeniedException(__language__(30036))
 
             if "openvpn: no process found" in ret:
                 Logger.log("openvpn process was not found, so assuming vpn is disabled", Logger.LOG_DEBUG)
@@ -418,7 +419,7 @@ class UnixVPNConnector(CommandExecutionConnector):
             ret = self._waitUntilVPNIsDisabled(checkForSudoFailed = True)
             strErrFile.close()
         except AccessDeniedException, e:
-            gui.DialogOK(e.args[0], "Check your credentials", "and try again")
+            gui.DialogOK(e.args[0], __language__(30037), __language__(30005))
             return False
         except Exception:
             Logger.log("Unix kill there was an error trying to kill the VPN", Logger.LOG_ERROR)

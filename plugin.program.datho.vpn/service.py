@@ -27,6 +27,7 @@ import xbmc
 from utils import Logger
 
 import config
+from config import __language__
 
 KEYMAP  = 'datho_vpn_menu.xml'
 

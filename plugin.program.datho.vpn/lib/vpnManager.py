@@ -27,6 +27,7 @@ import requests
 
 import config
 from utils import Logger
+from config import __language__
 
 class NoConnectionError(Exception):
     pass
@@ -76,7 +77,7 @@ class VPNServerManager:
             return re.compile(self.REGEX).findall(html)
         except urllib2.URLError, e:
             Logger.log("There was an error while getting content from remote server")
-            raise NoConnectionError("There was an error while getting content from remote server")
+            raise NoConnectionError(__language__(30042) )
 
     def _getItemsFromBase(self):
         try:

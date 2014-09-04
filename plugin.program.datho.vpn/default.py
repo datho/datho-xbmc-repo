@@ -26,6 +26,7 @@ from lib import common
 from lib.vpnConnectorFactory import VPNConnectorFactory
 from lib.vpnManager import VPNServerManager, NoConnectionError
 
+from config import __language__
 
 
 _SETTINGS  = 100
@@ -44,15 +45,15 @@ def Main():
     common.CheckVersion()
     common.CheckUsername()
 
-    gui.addDir(arguments, 'Configure VPN', _SETTINGS,  isFolder=False)
-    gui.addDir(arguments, 'Disable VPN',   _KILL,      isFolder=False)
+    gui.addDir(arguments, __language__(30001), _SETTINGS,  isFolder=False)
+    gui.addDir(arguments, __language__(30002),   _KILL,      isFolder=False)
     gui.addDir(arguments, ' ',             _SEPARATOR, isFolder=False)
 
     try:
         for country in VPNServerManager.getInstance().getCountries():
             gui.addDir(arguments, country[0], _COUNTRY, abrv=country[1], thumbnail=country[2])
     except NoConnectionError:
-        gui.DialogOK("It is not possible to connect to the remote server", "Check your network connection", "and try again")
+        gui.DialogOK( __language__(30003),  __language__(30004), __language__(30005))
 
 
 def addCitiesForCountry(countryName):
@@ -62,7 +63,7 @@ def addCitiesForCountry(countryName):
             label = '%s (%d)' % (city[0], city[2])
             gui.addDir(arguments, label, _VPN, thumbnail=city[1], server=city[3], isFolder=False, countryName = countryName)
     except NoConnectionError:
-        gui.DialogOK("It is not possible to connect to the remote server", "Check your network connection", "and try again")
+        gui.DialogOK(__language__(30003), __language__(30004), __language__(30005))
 
 
 
@@ -127,9 +128,9 @@ elif mode == _KILL:
     vpnConnector = VPNConnectorFactory.getConnector()
     ret = vpnConnector.kill(showBusy=True)
     if ret:
-        gui.DialogOK('VPN now disabled')
+        gui.DialogOK(__language__(30006))
     else:
-        gui.DialogOK('VPN is still enabled', 'There was an error while trying to disconnect OpenVPN')
+        gui.DialogOK(__language__(30007), __language__(30008))
 
 
 elif mode == _SEPARATOR:
@@ -138,7 +139,5 @@ elif mode == _SEPARATOR:
 else:
     Main()
 
-
 xbmcplugin.endOfDirectory(int(arguments[1]))
 
-# Version 0.8.5

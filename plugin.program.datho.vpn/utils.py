@@ -74,7 +74,6 @@ def GetSecondaryPublicNetworkInformation():
     
         if len(ipAddressMatch)!=2 or len(countryMatch)!=2 or len(cityMatch)!=2:
             Logger.log("There was an error parsing network data from %s" % url)
-            print "There was an error parsing the data"
             return None
     
         Logger.log("GetSecondaryPublicNetworkInformation: ip:%s country:%s city:%s" % (ipAddressMatch[1], countryMatch[1], cityMatch[1]), Logger.LOG_DEBUG)

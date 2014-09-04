@@ -21,12 +21,13 @@
 import gui
 import config
 from utils import Logger
+from config import __language__
 
 def CheckVersion():
     prev = config.ADDON.getSetting('VERSION')
     curr = config.VERSION
 
-    msg = 'Welcome to Datho VPN %s' % config.VERSION
+    msg = __language__(30043) % config.VERSION
 
     Logger.log(msg, Logger.LOG_ERROR)
 
@@ -42,6 +43,6 @@ def CheckVersion():
 
 def CheckUsername():
     if config.CheckCredentialsEmpty():
-        gui.DialogOK('Please enter your username and password')
+        gui.DialogOK(__language__(30044))
         gui.ShowSettings()
 
