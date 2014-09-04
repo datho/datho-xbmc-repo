@@ -37,6 +37,15 @@ class VPNConnector:
         self._serverAddress = serverAddress
         self._actionNotification = ActionNotification()
         self._actionNotification.start()
+        self._hardcodedServerAddress = False
+
+
+        configuredServerIpAddress = config.getConfiguredServerIpAddress()
+        if configuredServerIpAddress:
+            self._serverAddress = configuredServerIpAddress
+            self._hardcodedServerAddress = True
+            gui.DialogOK(__language__(30045), __language__(30046) % self._serverAddress, '')
+
 
     def kill(self, showBusy = False):
         if showBusy:
@@ -159,12 +168,18 @@ class VPNConnector:
         openVpnConfigFilePath  = config.getOpenVPNTemplateConfigFilePath()
         cert    = config.getCertFilePath()
 
+        if self._hardcodedServerAddress:
+            cert = config.getDathoCertFilePath()
+            Logger.log("Using datho cert:%s" % cert, Logger.LOG_DEBUG)
+
         file    = open(openVpnConfigFilePath, mode='r')
         content = file.read()
         file.close()
 
         authPath = authPath.replace('\\', '/')
         cert     = cert.replace('\\', '/')
+
+        print "SERVER ADDRESS:", self._serverAddress
 
         content = content.replace('#SERVER#',               self._serverAddress)
         content = content.replace('#PORT#',                 self._port)

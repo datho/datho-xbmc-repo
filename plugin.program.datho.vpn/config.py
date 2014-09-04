@@ -30,7 +30,7 @@ HOME     =  ADDON.getAddonInfo('path')
 PROFILE  =  xbmc.translatePath(ADDON.getAddonInfo('profile'))
 EXTERNAL = 0
 TITLE    = 'Datho-Digital VPN'
-VERSION  = '0.9.2'
+VERSION  = '0.9.5'
 
 COUNTRIES = {'AT' : 'Austria', 'AU':'Australia', 'BE':'Belguim', 'BR':'Brazil', 'CH':'Switzerland', 'DK':'Denmark', 'DE':'Germany', 'ES':'Spain', 'FR':'France', 'HU':'Hungary',  'JP':'Japan', 'KR':'South Korea', 'NL':'Netherlands', 'PL':'Poland', 'SE':'Sweden', 'SG':'Singapore', 'UK':'United Kingdom', 'US':'United  States'}
 OpenVPNLogFilePath =  os.path.join(PROFILE, 'openvpn.log')
@@ -73,10 +73,17 @@ def getSudo():
     return sudo, sudopwd
 
 def getUsername():
-    return ADDON.getSetting('USER') + "@dathodigital"
+    baseUsername = ADDON.getSetting('USER')
+    if getConfiguredServerIpAddress():
+        return baseUsername
+    return baseUsername + "@dathodigital"
 
 def getPassword():
     return ADDON.getSetting('PASS')
+
+def getConfiguredServerIpAddress():
+    return ADDON.getSetting('SERVER_IP')
+
 
 # Return True if User and Password are not empty
 def CheckCredentialsEmpty():
@@ -116,6 +123,15 @@ def getCertFilePath():
     """
     root    = _getConfigDirPath()
     return os.path.join(root, 'vpn.crt')
+
+def getDathoCertFilePath():
+    """
+    Returns the Path containing the Certificate used by OpenVPN
+    :return:
+    """
+    root    = _getConfigDirPath()
+    return os.path.join(root, 'datho.crt')
+
 
 def getOpenVPNTemplateConfigFilePath():
     """
