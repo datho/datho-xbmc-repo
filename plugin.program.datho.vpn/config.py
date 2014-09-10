@@ -74,16 +74,13 @@ def getSudo():
 
 def getUsername():
     baseUsername = ADDON.getSetting('USER')
-    if getConfiguredServerIpAddress():
-        return baseUsername
-    return baseUsername + "@dathodigital"
+    return baseUsername
 
 def getPassword():
     return ADDON.getSetting('PASS')
 
-def getConfiguredServerIpAddress():
-    return ADDON.getSetting('SERVER_IP')
-
+def getPaidServersPostFix():
+    return "@dathodigital"
 
 # Return True if User and Password are not empty
 def CheckCredentialsEmpty():
@@ -151,3 +148,9 @@ def getOpenVPNRealConfigFilePath():
 
 def getActionUrl():
     return "http://www.dathovpn.com/service/addon/action/"
+
+def getVPNType():
+    return ADDON.getSetting('VPNTYPE')
+
+def isVPNCustom():
+    return getVPNType()=="Custom"

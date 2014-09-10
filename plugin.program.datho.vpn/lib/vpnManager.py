@@ -52,13 +52,13 @@ class VPNServerManager:
     URL      =  'http://www.wlvpn.com/serverList.xml'
     REGEX_STR = 'server name="(.+?)" capacity="(.+?)" city="(.+?)" country="(.+?)" icon="(.+?)" ip="(.+?)" status="(.+?)" visible="(.+?)"'
     REGEX = re.compile(REGEX_STR)
-    TIMEOUT = 15 * 60
+    TIMEOUT = 10 * 60
     _instance = None
 
 
     @classmethod
     def getInstance(cls):
-        if cls._instance is None or cls._instance._isContentOld():
+        if cls._instance is None:
             cls._instance = VPNServerManager()
             cls._instance._init()
         return cls._instance
@@ -80,19 +80,24 @@ class VPNServerManager:
             raise NoConnectionError(__language__(30042) )
 
     def _getItemsFromBase(self):
+        self._usingDathoVPNServers = False
         try:
             Logger.log("Trying to retrieve info from base", Logger.LOG_DEBUG)
             quoted_user = urllib2.quote(config.getUsername())
             quoted_pass =  urllib2.quote(config.getPassword())
-            ret = requests.get("http://www.dathovpn.com/service/addon/servers/%s/%s/" % (quoted_user, quoted_pass))
+            ret = requests.get("https://www.dathovpn.com/service/addon/servers/%s/%s/" % (quoted_user, quoted_pass))
             result = self.REGEX.findall(ret.text)
             Logger.log("Retrieve from base ok result len:%s" %  len(result), Logger.LOG_DEBUG)
+
+            self._usingDathoVPNServers = True
+
             return result
         except urllib2.URLError, e:
             Logger.log("There was an error while getting content from remote server %r" % e, Logger.LOG_INFO)
             return []
 
-
+    def usingDathoVPNServers(self):
+        return self._usingDathoVPNServers
 
     def _init(self):
         self.lastContentUpdateTimestamp = time.time()
@@ -127,6 +132,8 @@ class VPNServerManager:
         return l
 
     def getCountries(self):
+        if self._instance._isContentOld():
+            self._init()
         return self.countries
 
 

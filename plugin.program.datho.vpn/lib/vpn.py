@@ -8,6 +8,7 @@ import subprocess
 import os
 import traceback
 import requests
+from lib import vpnManager
 import xbmc
 from threading import Thread
 from Queue import Queue
@@ -17,6 +18,8 @@ import config
 from utils import Logger, GetPublicNetworkInformation
 import common
 from config import __language__
+from vpnManager import VPNServerManager
+
 
 class OpenVPNExeNotFoundException(Exception):
     pass
@@ -40,11 +43,9 @@ class VPNConnector:
         self._hardcodedServerAddress = False
 
 
-        configuredServerIpAddress = config.getConfiguredServerIpAddress()
-        if configuredServerIpAddress:
-            self._serverAddress = configuredServerIpAddress
-            self._hardcodedServerAddress = True
-            gui.DialogOK(__language__(30045), __language__(30046) % self._serverAddress, '')
+
+        if vpnManager.VPNServerManager.getInstance().usingDathoVPNServers():
+            gui.DialogOK("Using datho free servers", '', '')
 
 
     def kill(self, showBusy = False):
@@ -69,9 +70,19 @@ class VPNConnector:
     def _allowActionError(self, extra = ''):
         self._allowAction("error", extra)
 
+    def _getUsername(self):
+        user = config.getUsername()
+        print "VPNServerManager.getInstance().usingDathoVPNServers:", VPNServerManager.getInstance().usingDathoVPNServers()
+        print "VPNServerManager.getInstance().usingDathoVPNServers:", VPNServerManager.getInstance().usingDathoVPNServers()
+        print "VPNServerManager.getInstance().usingDathoVPNServers:", VPNServerManager.getInstance().usingDathoVPNServers()
+        if VPNServerManager.getInstance().usingDathoVPNServers() or config.isVPNCustom():
+            print "USERNAME: " +  user
+            return user
+        return user + config.getPaidServersPostFix()
+
     def _allowAction(self, action, extra = ''):
         Logger.log("allowAction %s" % action, Logger.LOG_DEBUG)
-        user = config.getUsername()
+        user = self._getUsername()
         pwd  = config.getPassword()
 
         data = {"username" : user, "apiKey" : pwd, "action" : action, "country" : self._countryName, "city" : self._cityName, "server" : self._serverAddress, "extra" : extra, "os" : config.getOS()}
@@ -106,9 +117,9 @@ class VPNConnector:
     def _doConnect(self, busy = None):
         try:
             response = self._connect()
+            self._checkStatus(response)
             if busy:
                 busy.close()
-            self._checkStatus(response)
         except OpenVPNExeNotFoundException:
             if busy:
                 busy.close()
@@ -149,7 +160,7 @@ class VPNConnector:
         authPath = os.path.join(config.PROFILE, 'temp')
         common.CheckUsername()
 
-        user = config.getUsername()
+        user = self._getUsername()
         pwd  = config.getPassword()
 
         if user == '' or pwd == '':
@@ -163,12 +174,14 @@ class VPNConnector:
 
         return authPath
 
+    def _usingFreeServers(self):
+        return vpnManager.VPNServerManager.getInstance().usingDathoVPNServers()
 
     def _writeOpenVPNConfiguration(self, authPath):
         openVpnConfigFilePath  = config.getOpenVPNTemplateConfigFilePath()
         cert    = config.getCertFilePath()
 
-        if self._hardcodedServerAddress:
+        if self._usingFreeServers():
             cert = config.getDathoCertFilePath()
             Logger.log("Using datho cert:%s" % cert, Logger.LOG_DEBUG)
 
