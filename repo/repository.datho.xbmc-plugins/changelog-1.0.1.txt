@@ -1,0 +1,7 @@
+----------------------------------
+ repository.datho.xbmc-plugins - Changelog
+----------------------------------
+
+Version 1.0.1
+------------
+* Repo version clean up
