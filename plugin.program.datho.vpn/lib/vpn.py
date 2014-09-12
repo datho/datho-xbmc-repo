@@ -72,11 +72,8 @@ class VPNConnector:
 
     def _getUsername(self):
         user = config.getUsername()
-        print "VPNServerManager.getInstance().usingDathoVPNServers:", VPNServerManager.getInstance().usingDathoVPNServers()
-        print "VPNServerManager.getInstance().usingDathoVPNServers:", VPNServerManager.getInstance().usingDathoVPNServers()
-        print "VPNServerManager.getInstance().usingDathoVPNServers:", VPNServerManager.getInstance().usingDathoVPNServers()
+        Logger.log("Using Datho free servers:", VPNServerManager.getInstance().usingDathoVPNServers(), Logger.LOG_DEBUG)
         if VPNServerManager.getInstance().usingDathoVPNServers() or config.isVPNCustom():
-            print "USERNAME: " +  user
             return user
         return user + config.getPaidServersPostFix()
 
