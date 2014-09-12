@@ -88,7 +88,7 @@ class VPNServerManager:
             ret = requests.get("https://www.dathovpn.com/service/addon/servers/%s/%s/" % (quoted_user, quoted_pass))
             result = self.REGEX.findall(ret.text)
             Logger.log("Retrieve from base ok result len:%s" %  len(result), Logger.LOG_DEBUG)
-            if "<mode>Datho</mode>" in ret.test:
+            if "<mode>Datho</mode>" in ret.text:
                 self._usingDathoVPNServers = True
 
             return result
