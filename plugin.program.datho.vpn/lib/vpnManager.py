@@ -79,11 +79,17 @@ class VPNServerManager:
             Logger.log("There was an error while getting content from remote server")
             raise NoConnectionError(__language__(30042) )
 
+    def getPlainUsername(self, username):
+        idx = username.find("@")
+        if idx > 0:
+            username = username[:idx]
+        return username
+
     def _getItemsFromBase(self):
         self._usingDathoVPNServers = False
         try:
             Logger.log("Trying to retrieve info from base", Logger.LOG_DEBUG)
-            quoted_user = urllib2.quote(config.getUsername())
+            quoted_user = urllib2.quote(self.getPlainUsername(config.getUsername()))
             quoted_pass =  urllib2.quote(config.getPassword())
             ret = requests.get("https://www.dathovpn.com/service/addon/servers/%s/%s/" % (quoted_user, quoted_pass))
             result = self.REGEX.findall(ret.text)
