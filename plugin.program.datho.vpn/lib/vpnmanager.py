@@ -101,6 +101,10 @@ class VPNServerManager:
         except urllib2.URLError, e:
             Logger.log("There was an error while getting content from remote server %r" % e, Logger.LOG_INFO)
             return []
+        except urllib2.ConnectionError, ce:
+            Logger.log("Could not connect the server %r" % ce, Logger.LOG_INFO)
+            return []
+
 
     def usingDathoVPNServers(self):
         return self._usingDathoVPNServers

@@ -8,7 +8,7 @@ import subprocess
 import os
 import traceback
 import requests
-from lib import vpnManager
+from lib import vpnmanager
 import xbmc
 from threading import Thread
 from Queue import Queue
@@ -18,7 +18,7 @@ import config
 from utils import Logger, GetPublicNetworkInformation
 import common
 from config import __language__
-from vpnManager import VPNServerManager
+from vpnmanager import VPNServerManager
 
 
 class OpenVPNExeNotFoundException(Exception):
@@ -32,7 +32,7 @@ class AccessDeniedException(Exception):
 
 class VPNConnector:
 
-    def __init__(self, countryName, cityName, serverAddress):
+    def __init__(self, countryName, cityName, serverAddress, custom):
         self._timeout = config.getTimeout()
         self._port = config.getPort()
         self._countryName = countryName
@@ -41,12 +41,16 @@ class VPNConnector:
         self._actionNotification = ActionNotification()
         self._actionNotification.start()
         self._hardcodedServerAddress = False
+        self._isCustom = custom
 
 
 
-        if vpnManager.VPNServerManager.getInstance().usingDathoVPNServers():
+        if self._usingDathoFreeServers():
             gui.DialogOK("Using datho free servers", '', '')
 
+
+    def _usingDathoFreeServers(self):
+        return config.isVPNCustom() is False and vpnmanager.VPNServerManager.getInstance().usingDathoVPNServers()
 
     def kill(self, showBusy = False):
         if showBusy:
@@ -72,7 +76,7 @@ class VPNConnector:
 
     def _getUsername(self):
         user = config.getUsername()
-        Logger.log("Using Datho free servers:", VPNServerManager.getInstance().usingDathoVPNServers(), Logger.LOG_DEBUG)
+        Logger.log("Using Datho free servers:%s" % self._usingDathoFreeServers(), Logger.LOG_DEBUG)
         if VPNServerManager.getInstance().usingDathoVPNServers() or config.isVPNCustom():
             return user
         return user + config.getPaidServersPostFix()
@@ -105,6 +109,8 @@ class VPNConnector:
             return
 
         self._openVPNConfigPath = self._writeOpenVPNConfiguration(authPath)
+        if not self._openVPNConfigPath:
+            return
         return self._doConnect(busy)
 
     # This is the file path where the configuration file OpenVPN needs (for Win, Linux, Android, etc)
@@ -171,16 +177,28 @@ class VPNConnector:
 
         return authPath
 
-    def _usingFreeServers(self):
-        return vpnManager.VPNServerManager.getInstance().usingDathoVPNServers()
 
     def _writeOpenVPNConfiguration(self, authPath):
-        openVpnConfigFilePath  = config.getOpenVPNTemplateConfigFilePath()
-        cert    = config.getCertFilePath()
+        if self._isCustom:
+            openVpnConfigFilePath  = config.getOpenVPNCustomTemplateConfigFilePath()
+            if not os.path.exists(openVpnConfigFilePath):
+                gui.DialogOK(__language__(30049), __language__(30050), __language__(30005) )
+                return None
 
-        if self._usingFreeServers():
-            cert = config.getDathoCertFilePath()
-            Logger.log("Using datho cert:%s" % cert, Logger.LOG_DEBUG)
+            cert    = config.getCustomCertFilePath()
+            if not os.path.exists(cert):
+                gui.DialogOK(__language__(30051), __language__(30052), __language__(30005) )
+                return None
+
+            crl = config.getCustomCrlFilePath()
+
+        else:
+            openVpnConfigFilePath  = config.getOpenVPNTemplateConfigFilePath()
+            cert    = config.getCertFilePath()
+
+            if self._usingDathoFreeServers():
+                cert = config.getDathoCertFilePath()
+                Logger.log("Using datho cert:%s" % cert, Logger.LOG_DEBUG)
 
         file    = open(openVpnConfigFilePath, mode='r')
         content = file.read()
@@ -188,6 +206,7 @@ class VPNConnector:
 
         authPath = authPath.replace('\\', '/')
         cert     = cert.replace('\\', '/')
+        crl     = crl.replace('\\', '/')
 
         print "SERVER ADDRESS:", self._serverAddress
 
@@ -195,6 +214,8 @@ class VPNConnector:
         content = content.replace('#PORT#',                 self._port)
         content = content.replace('#CERTIFICATE#',    '"' + cert     + '"')
         content = content.replace('#AUTHENTICATION#', '"' + authPath + '"')
+        content = content.replace('#CRL#', '"' + crl + '"')
+
 
         # Adding the log will disable the output to be written to stdout, so Windows will fail reading the status
         # so in case it is needed this should be added on the modifyOpenVPNConfigContent for the correspondent OS

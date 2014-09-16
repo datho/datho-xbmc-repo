@@ -30,7 +30,7 @@ HOME     =  ADDON.getAddonInfo('path')
 PROFILE  =  xbmc.translatePath(ADDON.getAddonInfo('profile'))
 EXTERNAL = 0
 TITLE    = 'Datho-Digital VPN'
-VERSION  = '0.9.9'
+VERSION  = '0.9.11'
 
 COUNTRIES = {'AT' : 'Austria', 'AU':'Australia', 'BE':'Belguim', 'BR':'Brazil', 'CH':'Switzerland', 'DK':'Denmark', 'DE':'Germany', 'ES':'Spain', 'FR':'France', 'HU':'Hungary',  'JP':'Japan', 'KR':'South Korea', 'NL':'Netherlands', 'PL':'Poland', 'SE':'Sweden', 'SG':'Singapore', 'UK':'United Kingdom', 'US':'United  States'}
 OpenVPNLogFilePath =  os.path.join(PROFILE, 'openvpn.log')
@@ -113,6 +113,10 @@ def getPort():
 def _getConfigDirPath():
     return os.path.join(HOME, 'resources', 'configs')
 
+def _getCustomConfigDirPath():
+    return os.path.join( _getConfigDirPath(), 'custom')
+
+
 def getCertFilePath():
     """
     Returns the Path containing the Certificate used by OpenVPN
@@ -129,6 +133,21 @@ def getDathoCertFilePath():
     root    = _getConfigDirPath()
     return os.path.join(root, 'datho.crt')
 
+def getCustomCertFilePath():
+    """
+    Returns the Path containing the Certificate used by OpenVPN
+    :return:
+    """
+    customPath    = _getCustomConfigDirPath()
+    return os.path.join(customPath, 'ca.crt')
+
+def getCustomCrlFilePath():
+    """
+    Returns the Path containing the Certificate used by OpenVPN
+    :return:
+    """
+    customPath    = _getCustomConfigDirPath()
+    return os.path.join(customPath, 'crl.pem')
 
 def getOpenVPNTemplateConfigFilePath():
     """
@@ -139,12 +158,23 @@ def getOpenVPNTemplateConfigFilePath():
     root    = _getConfigDirPath()
     return os.path.join(root, 'cfg.opvn')
 
+def getOpenVPNCustomTemplateConfigFilePath():
+    """
+        Returns the Template file path containing the default configuration parameters for OpenVPN
+        this file should always keep unchanged
+    :return:s
+    """
+    root    = _getCustomConfigDirPath()
+    return os.path.join(root, 'cfg.opvn')
+
+
 def getOpenVPNRealConfigFilePath():
     """
     Returns the file path where the configuration file containing the OpenVPN Parameters is
     :return:aaa
     """
     return os.path.join(PROFILE, 'cfg.opvn')
+
 
 def getActionUrl():
     return "http://www.dathovpn.com/service/addon/action/"
@@ -154,3 +184,7 @@ def getVPNType():
 
 def isVPNCustom():
     return getVPNType()=="Custom"
+
+def getConfiguredServerAddress():
+    return ADDON.getSetting("SERVER_ADDRESS")
+

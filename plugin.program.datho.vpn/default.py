@@ -23,9 +23,10 @@ import urllib
 import xbmcplugin
 import gui
 from lib import common
-from lib.vpnConnectorFactory import VPNConnectorFactory
-from lib.vpnManager import VPNServerManager, NoConnectionError
+from lib.vpnconnectorfactory import VPNConnectorFactory
+from lib.vpnmanager import VPNServerManager, NoConnectionError
 
+import config
 from config import __language__
 
 
@@ -34,6 +35,7 @@ _KILL      = 200
 _SEPARATOR = 300
 _COUNTRY   = 400
 _VPN       = 500
+_CUSTOM_CONNECT = 600
 
 
 arguments = sys.argv
@@ -44,6 +46,10 @@ arguments = sys.argv
 def Main():
     common.CheckVersion()
     common.CheckUsername()
+
+    if config.isVPNCustom():
+        connectToCustomServer()
+        return
 
     gui.addDir(arguments, __language__(30001), _SETTINGS,  isFolder=False)
     gui.addDir(arguments, __language__(30002),   _KILL,      isFolder=False)
@@ -66,6 +72,13 @@ def addCitiesForCountry(countryName):
         gui.DialogOK(__language__(30003), __language__(30004), __language__(30005))
 
 
+def connectToCustomServer():
+    server = config.getConfiguredServerAddress()
+    if not server:
+        gui.addDir(arguments, __language__(30001), _SETTINGS,  isFolder=False)
+    else:
+        gui.addDir(arguments, __language__(30053), _CUSTOM_CONNECT,  isFolder=False)
+        gui.addDir(arguments, __language__(30002),   _KILL,      isFolder=False)
 
 
 
@@ -131,6 +144,12 @@ elif mode == _KILL:
         gui.DialogOK(__language__(30006))
     else:
         gui.DialogOK(__language__(30007), __language__(30008))
+
+elif mode == _CUSTOM_CONNECT:
+    server = config.getConfiguredServerAddress()
+    gui.DialogOK( __language__(30045),  __language__(30046) % server, "")
+    vpnConnector = VPNConnectorFactory.getConnector(serverAddress = server, custom=True)
+    vpnConnector.connectToVPNServer()
 
 
 elif mode == _SEPARATOR:

@@ -26,21 +26,22 @@ from vpn import LinuxVPNConnector, OpenElecVPNConnector, RaspBMCVPNConnector, Wi
 class VPNConnectorFactory:
 
     @classmethod
-    def getConnector(cls, countryName = '', cityName = '', serverAddress = ''):
-        Logger.log("Operating System Configured:%s Country:%s city:%s server:%s" % (config.getOS(),countryName, cityName, serverAddress) )
+    def getConnector(cls, countryName = '', cityName = '', serverAddress = '', custom = False):
+        Logger.log("Operating System Configured:%s custom:%s Country:%s city:%s server:%s" % (config.getOS(),custom, countryName, cityName, serverAddress) )
         if config.isAndroid():
             Logger.log("Creating AndroidVPNConnector ...")
-            return AndroidVPNConnector(countryName, cityName, serverAddress)
+            return AndroidVPNConnector(countryName, cityName, serverAddress, custom)
         elif config.isLinux():
             Logger.log("Creating LinuxVPNConnector ...")
-            return LinuxVPNConnector(countryName, cityName, serverAddress)
+            return LinuxVPNConnector(countryName, cityName, serverAddress, custom)
         elif config.isWindows():
             Logger.log("Creating windowsVPNConnector ...")
-            return WindowsVPNConnector(countryName, cityName, serverAddress)
+            return WindowsVPNConnector(countryName, cityName, serverAddress, custom)
         elif config.isOpenElec():
             Logger.log("Creating OpenElecVPNConnector ...")
-            return OpenElecVPNConnector(countryName, cityName, serverAddress)
+            return OpenElecVPNConnector(countryName, cityName, serverAddress, custom)
         elif config.isRaspBMC():
             Logger.log("Creating RaspBMCVPNConnector ...")
-            return RaspBMCVPNConnector(countryName, cityName, serverAddress)
+            return RaspBMCVPNConnector(countryName, cityName, serverAddress, custom)
         raise Exception("Platform %s not supported" % config.getOS())
+

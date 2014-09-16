@@ -190,10 +190,39 @@ msgid "Please enter your username and password"
 msgstr ""
 
 msgctxt "#30045"
-msgid "Using configured Server Address"
+msgid "Using custom Server Address"
 msgstr ""
 
 msgctxt "#30046"
-msgid "IP Selected:%s"
+msgid "Server address:%s"
 msgstr ""
 
+msgctxt "#30047"
+msgid "No server address provided"
+msgstr ""
+
+msgctxt "#30048"
+msgid "Add a VPN server on Addon settings and try again"
+msgstr ""
+
+
+msgctxt "#30049"
+msgid "Custom vpn config file not found"
+msgstr ""
+
+msgctxt "#30050"
+msgid "Please copy your vpn config file on custom directory"
+msgstr ""
+
+msgctxt "#30051"
+msgid "Custom certificate file not found"
+msgstr ""
+
+msgctxt "#30052"
+msgid "Please copy your vpn certificate file on custom directory"
+msgstr ""
+
+
+msgctxt "#30053"
+msgid "Connect to Custom VPN"
+msgstr ""
