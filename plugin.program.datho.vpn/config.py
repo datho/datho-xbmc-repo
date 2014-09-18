@@ -30,7 +30,7 @@ HOME     =  ADDON.getAddonInfo('path')
 PROFILE  =  xbmc.translatePath(ADDON.getAddonInfo('profile'))
 EXTERNAL = 0
 TITLE    = 'Datho-Digital VPN'
-VERSION  = '0.9.11'
+VERSION  = '0.9.12'
 
 COUNTRIES = {'AT' : 'Austria', 'AU':'Australia', 'BE':'Belguim', 'BR':'Brazil', 'CH':'Switzerland', 'DK':'Denmark', 'DE':'Germany', 'ES':'Spain', 'FR':'France', 'HU':'Hungary',  'JP':'Japan', 'KR':'South Korea', 'NL':'Netherlands', 'PL':'Poland', 'SE':'Sweden', 'SG':'Singapore', 'UK':'United Kingdom', 'US':'United  States'}
 OpenVPNLogFilePath =  os.path.join(PROFILE, 'openvpn.log')

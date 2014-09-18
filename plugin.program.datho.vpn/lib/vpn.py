@@ -179,6 +179,7 @@ class VPNConnector:
 
 
     def _writeOpenVPNConfiguration(self, authPath):
+        crl  = ''
         if self._isCustom:
             openVpnConfigFilePath  = config.getOpenVPNCustomTemplateConfigFilePath()
             if not os.path.exists(openVpnConfigFilePath):

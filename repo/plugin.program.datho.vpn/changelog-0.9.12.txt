@@ -2,18 +2,37 @@
  plugin.program.datho.vpn - Changelog
 ----------------------------------
 
-
 Version 0.9.12
 ------------
-* Ability to use custom servers
+* Ability to use Custom servers
+
+Version 0.9.9
+------------
+* Minor fixes when getting free servers
 
 Version 0.9.8
 ------------
-* Free Servers added
+* Minor fixes
+* Addon description improved
 
-Version 0.8.7
+Version 0.9.7
+------------
+* Ability to use free servers
+
+Version 0.9.1
+------------
+* Ability to detect IP address improved
+
+
+Version 0.9.1
+------------
+* Company added so the user does not need to add it
+
+
+Version 0.8.8
 ------------
 * OpenElec fix
+
 
 Version 0.8.6
 ------------
