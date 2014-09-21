@@ -19,10 +19,7 @@
 #
 
 import re
-try:
-    import requests2 as requests
-except:
-    import requests
+import requests
 
 import traceback
 import xbmc
