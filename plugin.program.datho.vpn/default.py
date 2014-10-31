@@ -133,6 +133,7 @@ elif mode == _VPN:
     city = label.rsplit(' (', 1)[0]
     vpnConnector = VPNConnectorFactory.getConnector(country, city, server)
     vpnConnector.connectToVPNServer()
+    vpnConnector.stopThreads()
 
 elif mode == _SETTINGS:
     gui.ShowSettings()
@@ -140,6 +141,7 @@ elif mode == _SETTINGS:
 elif mode == _KILL:
     vpnConnector = VPNConnectorFactory.getConnector()
     ret = vpnConnector.kill(showBusy=True)
+    vpnConnector.stopThreads()
     if ret:
         gui.DialogOK(__language__(30006))
     else:
@@ -150,6 +152,7 @@ elif mode == _CUSTOM_CONNECT:
     gui.DialogOK( __language__(30045),  __language__(30046) % server, "")
     vpnConnector = VPNConnectorFactory.getConnector(serverAddress = server, custom=True)
     vpnConnector.connectToVPNServer()
+    vpnConnector.stopThreads()
 
 
 elif mode == _SEPARATOR:

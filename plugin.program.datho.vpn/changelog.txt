@@ -2,7 +2,7 @@
  plugin.program.datho.vpn - Changelog
 ----------------------------------
 
-Version 0.9.20
+Version 0.9.21
 ------------
 * Fix issue when closing XBMC on Windows
 

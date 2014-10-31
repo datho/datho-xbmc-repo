@@ -43,11 +43,13 @@ class VPNConnector:
         self._hardcodedServerAddress = False
         self._isCustom = custom
 
-
-
         if self._usingDathoFreeServers():
             gui.DialogOK("Using datho free servers", '', '')
 
+
+    def stopThreads(self):
+        Logger.log("Stopping internal threads")
+        self._actionNotification.stop()
 
     def _usingDathoFreeServers(self):
         return config.isVPNCustom() is False and vpnmanager.VPNServerManager.getInstance().usingDathoVPNServers()
@@ -607,13 +609,23 @@ class ActionNotification(Thread):
     def __init__(self):
         Thread.__init__(self)
         self._queue = Queue()
+        self._shouldRun = True
 
     def push(self, data):
         self._queue.put(data)
 
+    def stop(self):
+        self._shouldRun = False
+        self._queue.put(None)
+
     def run(self):
+        self._shouldRun = True
         while True:
             data = self._queue.get()
+            if data is None:
+                Logger.log("ActionNotification: received data None. Finishing")
+                return
+
             Logger.log("ActionNotification: %r" % data, Logger.LOG_DEBUG)
             try:
                 ret = requests.post(config.getActionUrl(), data)
