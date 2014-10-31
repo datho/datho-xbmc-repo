@@ -85,15 +85,14 @@ monitor = MyMonitor()
 while (not xbmc.abortRequested):
     xbmc.sleep(1000)
 
+Logger.error("Service aborted... stopping now", Logger.LOG_DEBUG)
 
 del monitor
-from lib import vpn
+from lib import vpnconnectorfactory
 
 try:
-    Logger.log("Service main code executed", Logger.LOG_DEBUG)
-
-    vpnConnector = vpn.VPNConnectorFactory.getConnector()
-    ret = vpnConnector.kill(showBusy=True)
+    vpnConnector = vpnconnectorfactory.VPNConnectorFactory.getConnector()
+    ret = vpnConnector.kill(showBusy=False, wait = False)
 except Exception:
-    Logger.log("Exception raised while trying to execute service main")
+    Logger.log("Exception raised while trying to stop the addon")
     traceback.print_exc()

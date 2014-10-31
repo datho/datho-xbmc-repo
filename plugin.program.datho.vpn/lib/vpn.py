@@ -52,14 +52,14 @@ class VPNConnector:
     def _usingDathoFreeServers(self):
         return config.isVPNCustom() is False and vpnmanager.VPNServerManager.getInstance().usingDathoVPNServers()
 
-    def kill(self, showBusy = False):
+    def kill(self, showBusy = False, wait = True):
         if showBusy:
             self._allowActionKill()
         busy = None
         if showBusy:
             busy = gui.ShowBusy()
 
-        ret = self._kill()
+        ret = self._kill(wait)
 
         if busy:
             busy.close()
@@ -127,7 +127,7 @@ class VPNConnector:
             if busy:
                 busy.close()
 
-    def _kill(self):
+    def _kill(self, wait = True):
         raise NotImplementedError()
 
     def _connect(self):
@@ -450,7 +450,7 @@ class UnixVPNConnector(CommandExecutionConnector):
             return 'killall -SIGINT openvpn'
 
 
-    def _kill(self):
+    def _kill(self, wait = True):
         ret = False
         try:
             Logger.log("Unix trying to kill openvpn")
@@ -553,7 +553,7 @@ class RaspBMCVPNConnector(UnixVPNConnector):
 
 class WindowsVPNConnector(CommandExecutionConnector):
 
-    def _kill(self):
+    def _kill(self, wait = True):
         Logger.log("Windows kill VPN connection")
         try:
             si = self._getStartupInfo()
@@ -562,7 +562,11 @@ class WindowsVPNConnector(CommandExecutionConnector):
             # si.wShowWindow = subprocess._subprocess.SW_HIDE
 
             ps  = subprocess.Popen('TASKKILL /F /IM openvpn.exe', shell=True, stdout=subprocess.PIPE, startupinfo=None)
-            ps.wait()
+            if wait:
+                Logger.log("Windows kill waiting for command to be executed")
+                ps.wait()
+            else:
+                Logger.log("Windows kill NOT waiting for command to be executed")
         except Exception:
             Logger.log("Windows kill there was an error trying to kill the VPN", Logger.LOG_ERROR)
             traceback.print_exc()
