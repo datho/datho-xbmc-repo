@@ -2,6 +2,10 @@
  plugin.program.datho.vpn - Changelog
 ----------------------------------
 
+Version 0.9.30
+------------
+* Add new path for OpenElec OpenVPN versions
+
 Version 0.9.21
 ------------
 * Fix issue when closing XBMC on Windows

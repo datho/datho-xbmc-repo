@@ -532,8 +532,11 @@ class OpenElecVPNConnector(UnixVPNConnector):
 
     def _getOpenVPNExecPath(self):
         path = '/usr/sbin/openvpn'
+        alternative = '/storage/.kodi/addons/network.openvpn/bin/openvpn'
         if self._check(path):
             return path
+        if self._check(alternative):
+            return alternative
 
         return None
 
